@@ -5,6 +5,8 @@
 
 package com.wireguard.config;
 
+import android.net.IpPrefix;
+
 import com.wireguard.config.BadConfigException.Location;
 import com.wireguard.config.BadConfigException.Reason;
 import com.wireguard.config.BadConfigException.Section;
@@ -43,6 +45,7 @@ public final class Interface {
     private final Set<String> dnsSearchDomains;
     private final Set<String> excludedApplications;
     private final Set<String> includedApplications;
+    private final Set<IpPrefix> excludedRoutes;
     private final KeyPair keyPair;
     private final Optional<Integer> listenPort;
     private final Optional<Integer> mtu;
@@ -54,6 +57,7 @@ public final class Interface {
         dnsSearchDomains = Collections.unmodifiableSet(new LinkedHashSet<>(builder.dnsSearchDomains));
         excludedApplications = Collections.unmodifiableSet(new LinkedHashSet<>(builder.excludedApplications));
         includedApplications = Collections.unmodifiableSet(new LinkedHashSet<>(builder.includedApplications));
+        excludedRoutes = Collections.unmodifiableSet(new LinkedHashSet<>(builder.excludedRoutes));
         keyPair = Objects.requireNonNull(builder.keyPair, "Interfaces must have a private key");
         listenPort = builder.listenPort;
         mtu = builder.mtu;
@@ -169,6 +173,16 @@ public final class Interface {
     }
 
     /**
+     * Returns the set of ip prefixes excluded from using the interface
+     *
+     * @return a set of ip prefixes
+     */
+    public Set<IpPrefix> getExcludedRoutes() {
+        // The collection is already immutable.
+        return excludedRoutes;
+    }
+
+    /**
      * Returns the public/private key pair used by the interface.
      *
      * @return a key pair
@@ -273,6 +287,8 @@ public final class Interface {
         private final Set<String> excludedApplications = new LinkedHashSet<>();
         // Defaults to an empty set.
         private final Set<String> includedApplications = new LinkedHashSet<>();
+        // Defaults to an empty set
+        private final Set<IpPrefix> excludedRoutes = new LinkedHashSet<>();
         // No default; must be provided before building.
         @Nullable private KeyPair keyPair;
         // Defaults to not present.
@@ -337,6 +353,16 @@ public final class Interface {
 
         public Builder includeApplications(final Collection<String> applications) {
             includedApplications.addAll(applications);
+            return this;
+        }
+
+        public Builder excludeRoutes(final Collection<IpPrefix> routes) {
+            excludedRoutes.addAll(routes);
+            return this;
+        }
+
+        public Builder excludeRoute(final IpPrefix route) {
+            excludedRoutes.add(route);
             return this;
         }
 

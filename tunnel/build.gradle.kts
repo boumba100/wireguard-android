@@ -119,10 +119,12 @@ publishing {
                 password = providers.environmentVariable("SONATYPE_PASSWORD").orNull
             }
         }
+
+        mavenLocal()
     }
 }
 
-signing {
-    useGpgCmd()
-    sign(publishing.publications)
-}
+//signing {
+//    useGpgCmd()
+//    sign(publishing.publications)
+//}
