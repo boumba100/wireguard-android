@@ -7,6 +7,7 @@ package com.wireguard.android.backend;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.IpPrefix;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.system.OsConstants;
@@ -286,6 +287,9 @@ public final class GoBackend implements Backend {
 
             for (final String includedApplication : config.getInterface().getIncludedApplications())
                 builder.addAllowedApplication(includedApplication);
+
+            for (final IpPrefix excludedRoute: config.getInterface().getExcludedRoutes())
+                builder.excludeRoute(excludedRoute);
 
             for (final InetNetwork addr : config.getInterface().getAddresses())
                 builder.addAddress(addr.getAddress(), addr.getMask());
